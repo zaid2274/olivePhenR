@@ -1,0 +1,60 @@
+---
+title: "Introduction à olivePhenR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction à olivePhenR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+Le package `olivePhenR` permet de modéliser les stades phénologiques de l'olivier et d'analyser les risques de gel tardif à partir de données climatiques journalières.
+
+## Chargement du package
+
+```{r setup}
+library(olivePhenR)
+```
+
+## Utilisation des données d'exemple
+
+```{r data}
+data("climate_sample")
+head(climate_sample)
+```
+
+## Calcul des degrés-jours
+
+```{r gdd}
+gdd_data <- calculate_degree_days(climate_sample, tbase = 10)
+head(gdd_data)
+```
+
+## Calcul des chilling units
+
+```{r chilling}
+chill_data <- calculate_chilling_units(gdd_data)
+head(chill_data)
+```
+
+## Détection des stades phénologiques
+
+```{r stages}
+stages <- detect_phenological_stage(chill_data)
+attr(stages, "phenological_dates")
+```
+
+## Analyse du risque de gel
+
+```{r frost}
+flowering_date <- attr(stages, "phenological_dates")$flowering
+risk <- analyze_frost_risk(stages, flowering_date = flowering_date)
+cat("Risque de gel :", risk$risk_class)
+```
+
+## Visualisation
+
+```{r plot}
+plot_phenology_curves(chill_data)
+```
