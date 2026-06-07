@@ -1,0 +1,70 @@
+---
+title: "Rapport Phénologique de l'Olivier"
+author: "olivePhenR"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+params:
+  data: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(olivePhenR)
+```
+
+## 1. Données Climatiques
+
+```{r}
+data <- params$data
+knitr::kable(head(data), caption = "Aperçu des données climatiques")
+```
+
+## 2. Degrés-Jours
+
+```{r}
+gdd_data <- calculate_degree_days(data, tbase = 10)
+knitr::kable(head(gdd_data[, c("date", "tmin", "tmax", "gdd", "gdd_cumul")]),
+             caption = "Degrés-jours cumulés")
+```
+
+## 3. Unités de Froid
+
+```{r}
+chill_data <- calculate_chilling_units(gdd_data)
+knitr::kable(head(chill_data[, c("date", "chilling_units", "chilling_cumul")]),
+             caption = "Unités de froid cumulées")
+```
+
+## 4. Stades Phénologiques
+
+```{r}
+stages <- detect_phenological_stage(chill_data)
+dates <- attr(stages, "phenological_dates")
+df_dates <- data.frame(
+  Stade = c("Débourrement", "Floraison", "Fructification"),
+  Date  = c(as.character(dates$budburst),
+            as.character(dates$flowering),
+            as.character(dates$fruiting))
+)
+knitr::kable(df_dates, caption = "Dates phénologiques estimées")
+```
+
+## 5. Risque de Gel
+
+```{r}
+flowering_date <- attr(stages, "phenological_dates")$flowering
+risk <- analyze_frost_risk(stages, flowering_date = flowering_date)
+cat("Jours de gel :", risk$frost_days, "\n")
+cat("Fréquence :", round(risk$frost_freq * 100, 1), "%\n")
+cat("Classe de risque :", risk$risk_class, "\n")
+```
+
+## 6. Visualisation
+
+```{r fig.width=7, fig.height=4}
+plot_phenology_curves(chill_data)
+```
