@@ -1,21 +1,26 @@
 Package: olivePhenR
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Modelisation Phenologique de l'Olivier et Risque de Gel
+Version: 0.1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Zaid", "Baitar", email = "zaidbaitar00@gmail.com", role = c("aut", "cre"))
+Description: Package R permettant de modeliser les principaux stades 
+    phenologiques de l'olivier (dormance, debourrement, floraison, fructification),
+    de calculer les degres-jours et les unites de froid, d'analyser les risques 
+    de gel tardif et de produire des visualisations phenologiques a partir de 
+    donnees climatiques journalieres.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
-URL: https://github.com/zaid2274/olivePhenR
-BugReports: https://github.com/zaid2274/olivePhenR/issues
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
-Config/testthat/edition: 3
+Imports:
+    dplyr,
+    ggplot2,
+    tools
 VignetteBuilder: knitr
-Depends: 
-    R (>= 3.5)
-LazyData: true
+Config/testthat/edition: 3
+URL: https://github.com/zaid2274/olivePhenR
+BugReports: https://github.com/zaid2274/olivePhenR/issues

@@ -1,5 +1,7 @@
 ---
 title: "Introduction à olivePhenR"
+author: "Zaid Baitar"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction à olivePhenR}
@@ -7,54 +9,80 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
 ## Introduction
 
-Le package `olivePhenR` permet de modéliser les stades phénologiques de l'olivier et d'analyser les risques de gel tardif à partir de données climatiques journalières.
+`olivePhenR` est un package R dédié à la modélisation phénologique de l'olivier (*Olea europaea*). Il permet de :
+
+- Calculer les **degrés-jours** et les **unités de froid**
+- Détecter les **stades phénologiques** (dormance, débourrement, floraison, fructification)
+- Analyser les **risques de gel tardif**
+- Produire des **visualisations** phénologiques
 
 ## Chargement du package
 
-```{r setup}
+```{r}
 library(olivePhenR)
 ```
 
-## Utilisation des données d'exemple
+## Données climatiques d'exemple
 
-```{r data}
+```{r}
 data("climate_sample")
 head(climate_sample)
 ```
 
+Le jeu de données contient `r nrow(climate_sample)` observations journalières avec les températures minimales et maximales.
+
 ## Calcul des degrés-jours
 
-```{r gdd}
+Les degrés-jours (GDD) mesurent l'accumulation thermique au-dessus d'une température de base.
+
+```{r}
 gdd_data <- calculate_degree_days(climate_sample, tbase = 10)
-head(gdd_data)
+head(gdd_data[, c("date", "tmin", "tmax", "gdd", "gdd_cumul")])
 ```
 
-## Calcul des chilling units
+## Calcul des unités de froid
 
-```{r chilling}
+Les unités de froid (Chilling Units) mesurent l'accumulation du froid hivernal nécessaire à la levée de dormance.
+
+```{r}
 chill_data <- calculate_chilling_units(gdd_data)
-head(chill_data)
+head(chill_data[, c("date", "tmin", "tmax", "chilling_units", "chilling_cumul")])
 ```
 
 ## Détection des stades phénologiques
 
-```{r stages}
+```{r}
 stages <- detect_phenological_stage(chill_data)
-attr(stages, "phenological_dates")
+dates <- attr(stages, "phenological_dates")
+
+cat("Date de débourrement :", as.character(dates$budburst), "\n")
+cat("Date de floraison    :", as.character(dates$flowering), "\n")
+cat("Date de fructification:", as.character(dates$fruiting), "\n")
 ```
 
 ## Analyse du risque de gel
 
-```{r frost}
+```{r}
 flowering_date <- attr(stages, "phenological_dates")$flowering
 risk <- analyze_frost_risk(stages, flowering_date = flowering_date)
-cat("Risque de gel :", risk$risk_class)
+
+cat("Jours de gel :", risk$frost_days, "\n")
+cat("Fréquence gel :", round(risk$frost_freq * 100, 1), "%\n")
+cat("Classe de risque :", risk$risk_class, "\n")
 ```
 
-## Visualisation
+## Visualisation des courbes phénologiques
 
-```{r plot}
+```{r fig.width=7, fig.height=4}
 plot_phenology_curves(chill_data)
 ```
+
+## Conclusion
+
+Le package `olivePhenR` fournit un ensemble d'outils complets pour le suivi phénologique de l'olivier. Il peut être utilisé pour estimer les dates clés du cycle végétatif et évaluer les risques climatiques associés.
