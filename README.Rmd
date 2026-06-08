@@ -66,3 +66,15 @@ plot_phenology_curves(chill_data)
 ## Auteur
 
 Zaid Baitar
+
+## Sources des données
+
+| Données | Source | Lien |
+|---------|--------|------|
+| Températures mondiales (Tmin/Tmax) | WorldClim v2.1 | [worldclim.org](https://worldclim.org) |
+| Occurrences olivier | GBIF (Global Biodiversity Information Facility) | [gbif.org](https://gbif.org) |
+| Données climatiques journalières | Simulées à partir de WorldClim | — |
+| Observations de floraison | Données simulées représentatives du Maroc | — |
+
+> Les données WorldClim sont téléchargées automatiquement via le package `geodata`.
+> Les occurrences de l'olivier (*Olea europaea*) sont importées via le package `rgbif`.
