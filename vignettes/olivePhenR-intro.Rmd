@@ -20,7 +20,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 - Calculer les **degrés-jours** et les **unités de froid**
 - Détecter les **stades phénologiques** (dormance, débourrement, floraison, fructification)
 - Analyser les **risques de gel tardif**
-- Produire des **visualisations** phénologiques
+- Produire des **cartes phénologiques** à partir de données WorldClim
+- Générer des **rapports automatiques** HTML/PDF
 
 ## Chargement du package
 
@@ -28,7 +29,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(olivePhenR)
 ```
 
-## Données climatiques d'exemple
+## 1. Données climatiques journalières
 
 ```{r}
 data("climate_sample")
@@ -37,52 +38,101 @@ head(climate_sample)
 
 Le jeu de données contient `r nrow(climate_sample)` observations journalières avec les températures minimales et maximales.
 
-## Calcul des degrés-jours
-
-Les degrés-jours (GDD) mesurent l'accumulation thermique au-dessus d'une température de base.
+## 2. Calcul des degrés-jours
 
 ```{r}
 gdd_data <- calculate_degree_days(climate_sample, tbase = 10)
 head(gdd_data[, c("date", "tmin", "tmax", "gdd", "gdd_cumul")])
 ```
 
-## Calcul des unités de froid
-
-Les unités de froid (Chilling Units) mesurent l'accumulation du froid hivernal nécessaire à la levée de dormance.
+## 3. Calcul des unités de froid
 
 ```{r}
 chill_data <- calculate_chilling_units(gdd_data)
 head(chill_data[, c("date", "tmin", "tmax", "chilling_units", "chilling_cumul")])
 ```
 
-## Détection des stades phénologiques
+## 4. Détection des stades phénologiques
 
 ```{r}
 stages <- detect_phenological_stage(chill_data)
 dates <- attr(stages, "phenological_dates")
 
-cat("Date de débourrement :", as.character(dates$budburst), "\n")
-cat("Date de floraison    :", as.character(dates$flowering), "\n")
+cat("Date de débourrement  :", as.character(dates$budburst), "\n")
+cat("Date de floraison     :", as.character(dates$flowering), "\n")
 cat("Date de fructification:", as.character(dates$fruiting), "\n")
 ```
 
-## Analyse du risque de gel
+## 5. Analyse du risque de gel
 
 ```{r}
 flowering_date <- attr(stages, "phenological_dates")$flowering
 risk <- analyze_frost_risk(stages, flowering_date = flowering_date)
 
-cat("Jours de gel :", risk$frost_days, "\n")
-cat("Fréquence gel :", round(risk$frost_freq * 100, 1), "%\n")
+cat("Jours de gel     :", risk$frost_days, "\n")
+cat("Fréquence gel    :", round(risk$frost_freq * 100, 1), "%\n")
 cat("Classe de risque :", risk$risk_class, "\n")
 ```
 
-## Visualisation des courbes phénologiques
+## 6. Observations de floraison au Maroc
+
+```{r}
+data("flowering_observations")
+head(flowering_observations)
+```
+
+## 7. Visualisation des courbes phénologiques
 
 ```{r fig.width=7, fig.height=4}
 plot_phenology_curves(chill_data)
 ```
 
-## Conclusion
+## 8. Données raster WorldClim
 
-Le package `olivePhenR` fournit un ensemble d'outils complets pour le suivi phénologique de l'olivier. Il peut être utilisé pour estimer les dates clés du cycle végétatif et évaluer les risques climatiques associés.
+Les fonctions `map_flowering_date()` et `map_frost_risk()` utilisent des données raster WorldClim téléchargées automatiquement :
+
+```{r eval=FALSE}
+# Téléchargement des données WorldClim (nécessite internet)
+r_tmin <- load_climate_rasters(source = "worldclim", var = "tmin", res = 10)
+r_tmax <- load_climate_rasters(source = "worldclim", var = "tmax", res = 10)
+
+# Carte des dates de floraison
+flowering_map <- map_flowering_date(r_tmin, r_tmax)
+plot_risk_maps(flowering_map, title = "Mois de floraison de l'olivier")
+
+# Carte du risque de gel
+risk_map <- map_frost_risk(r_tmin, flowering_map)
+plot_risk_maps(risk_map, title = "Risque de gel tardif")
+```
+
+## 9. Comparaison entre régions
+
+```{r}
+data_marrakech <- climate_sample
+data_fes <- climate_sample
+data_fes$tmin <- data_fes$tmin - 2
+data_fes$tmax <- data_fes$tmax - 2
+
+regions <- list(Marrakech = data_marrakech, Fes = data_fes)
+compare_regions(regions)
+```
+
+## 10. Génération du rapport
+
+```{r eval=FALSE}
+# Générer un rapport HTML
+generate_report(data = climate_sample, output_file = "rapport_olivier.html")
+
+# Générer un rapport PDF
+generate_report(data = climate_sample, 
+                output_file = "rapport_olivier.pdf", 
+                output_format = "pdf")
+```
+
+## Sources des données
+
+| Données | Source |
+|---------|--------|
+| Températures mondiales | WorldClim v2.1 |
+| Occurrences olivier | GBIF |
+| Observations floraison | Données simulées Maroc |
