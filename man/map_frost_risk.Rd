@@ -7,18 +7,23 @@
 map_frost_risk(tmin_raster, flowering_raster, frost_threshold = 0)
 }
 \arguments{
-\item{tmin_raster}{SpatRaster of minimum temperatures}
+\item{tmin_raster}{SpatRaster of minimum temperatures (12 layers = 12 months)}
 
-\item{flowering_raster}{SpatRaster of flowering dates (output of map_flowering_date)}
+\item{flowering_raster}{SpatRaster of flowering months (output of map_flowering_date)}
 
 \item{frost_threshold}{Temperature threshold for frost (default: 0)}
 }
 \value{
-A SpatRaster with frost risk index
+A SpatRaster with frost risk class (1=faible, 2=moyen, 3=eleve)
 }
 \description{
 Map Frost Risk
 }
 \examples{
+\dontrun{
+r_tmin <- load_climate_rasters(source = "worldclim", var = "tmin")
+r_tmax <- load_climate_rasters(source = "worldclim", var = "tmax")
+flowering_map <- map_flowering_date(r_tmin, r_tmax)
 risk_map <- map_frost_risk(r_tmin, flowering_map)
+}
 }

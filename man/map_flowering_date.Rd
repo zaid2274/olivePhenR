@@ -12,22 +12,24 @@ map_flowering_date(
 )
 }
 \arguments{
-\item{tmin_raster}{SpatRaster of minimum temperatures}
+\item{tmin_raster}{SpatRaster of minimum temperatures (12 layers = 12 months)}
 
-\item{tmax_raster}{SpatRaster of maximum temperatures}
+\item{tmax_raster}{SpatRaster of maximum temperatures (12 layers = 12 months)}
 
 \item{tbase}{Base temperature for GDD calculation (default: 10)}
 
 \item{threshold_flowering}{GDD threshold for flowering (default: 300)}
 }
 \value{
-A SpatRaster with estimated flowering dates (day of year)
+A SpatRaster with estimated flowering month
 }
 \description{
 Map Flowering Date
 }
 \examples{
-r_tmin <- load_climate_rasters(path = "data/rasters", variable = "tmin")
-r_tmax <- load_climate_rasters(path = "data/rasters", variable = "tmax")
+\dontrun{
+r_tmin <- load_climate_rasters(source = "worldclim", var = "tmin")
+r_tmax <- load_climate_rasters(source = "worldclim", var = "tmax")
 flowering_map <- map_flowering_date(r_tmin, r_tmax)
+}
 }
