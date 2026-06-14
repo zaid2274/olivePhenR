@@ -16,16 +16,18 @@ devtools::install_github("zaid2274/olivePhenR")
 
 ## Fonctions principales
 
-| Fonction                      | Description                              |
-|-------------------------------|------------------------------------------|
-| `import_climate_data()`       | Import des données climatiques CSV/Excel |
-| `calculate_degree_days()`     | Calcul des degrés-jours cumulés          |
-| `calculate_chilling_units()`  | Calcul des unités de froid               |
-| `detect_phenological_stage()` | Détection des stades phénologiques       |
-| `calibrate_model()`           | Calibration du modèle phénologique       |
-| `analyze_frost_risk()`        | Analyse du risque de gel tardif          |
-| `plot_phenology_curves()`     | Visualisation des courbes phénologiques  |
-| `generate_report()`           | Génération de rapport HTML/PDF           |
+| Fonction | Description |
+|----|----|
+| `import_climate_data()` | Import des données climatiques CSV/Excel |
+| `calculate_degree_days()` | Calcul des degrés-jours cumulés |
+| `calculate_chilling_units()` | Calcul des unités de froid |
+| `detect_phenological_stage()` | Détection des stades phénologiques |
+| `calibrate_model()` | Calibration du modèle phénologique |
+| `analyze_frost_risk()` | Analyse du risque de gel tardif |
+| `plot_phenology_curves()` | Visualisation des courbes phénologiques |
+| `generate_report()` | Génération de rapport HTML/PDF |
+| `load_modis_data()` | Téléchargement données satellitaires MODIS (LST) |
+| `load_sentinel_data()` | Recherche données Sentinel-2 via Copernicus STAC |
 
 ## Exemple d’utilisation
 
@@ -74,6 +76,8 @@ Zaid Baitar
 | Occurrences olivier | GBIF (Global Biodiversity Information Facility) | [gbif.org](https://gbif.org) |
 | Données climatiques journalières | Simulées à partir de WorldClim | — |
 | Observations de floraison | Données simulées représentatives du Maroc | — |
+| Température de surface (LST) | MODIS MOD11A1 via NASA | [modis.gsfc.nasa.gov](https://modis.gsfc.nasa.gov) |
+| Images satellitaires | Sentinel-2 L2A via Copernicus | [copernicus.eu](https://copernicus.eu) |
 
 > Les données WorldClim sont téléchargées automatiquement via le package
 > `geodata`. Les occurrences de l’olivier (*Olea europaea*) sont
